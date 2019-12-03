@@ -35,7 +35,7 @@ INSTALLED_APPS = [
    'django.contrib.sessions',
    'django.contrib.messages',
    'django.contrib.staticfiles',
-   'pages'
+   'pages',
 ]
 
 MIDDLEWARE = [
@@ -114,6 +114,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # STATICFILES_DIRS = [
 #    os.path.join(BASE_DIR, "static"),
 #    '/home/maqsood/django-projects-ven/test_project/pages/static/',
