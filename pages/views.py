@@ -1,9 +1,15 @@
+from django.conf import settings
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail, BadHeaderError
+from django.utils import timezone
 from django.views.generic import TemplateView
-from .forms import ContactForm
+# from .forms import ContactForm
+from django.core.files.storage import FileSystemStorage
+from .forms import EmailForm
+from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 
 
 # Create your views here.
@@ -23,23 +29,23 @@ class BlogPageView(TemplateView):
    template_name = 'blog.html'
 
 
-def emailView(request):
-   if request.method == 'GET':
-      form = ContactForm()
-   else:
-      form = ContactForm(request.POST)
+def email(request):
+   if request.method == "POST":
+      form = EmailForm(request.POST, request.FILES)
       if form.is_valid():
-         message = form.cleaned_data['message']
-         # name = form.cleaned_data['name']
-         from_email = form.cleaned_data['from_email']
-         subject = form.cleaned_data['subject']
-         try:
-            send_mail(subject, message, from_email, ['maqsoodshah@ncloud.hk'])
-         except BadHeaderError:
-            return HttpResponse('Invalid header found.')
-         return redirect('success')
-   return render(request, "email.html", {'form': form})
-
-
-def successView(request):
-   return HttpResponse('Success! Thank you for message.')
+         post = form.save(commit=False)
+         post.published_date = timezone.now()
+         post.save()
+         email = request.POST.get('email')
+         subject = request.POST.get('subject')
+         message = request.POST.get('message')
+         document = request.FILES.get('document')
+         email_from = settings.EMAIL_HOST_USER
+         recipient_list = [email]
+         email = EmailMessage(subject, message, email_from, recipient_list)
+         base_dir = 'media/documents/'
+         email.attach_file('media/documents/' + str(document))
+         email.send()
+      else:
+         form = EmailForm()
+         return HttpResponseRedirect(request, 'pages/contact.html', {'form': form})
