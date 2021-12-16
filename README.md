@@ -6,5 +6,5 @@
 5. if you want to change allowed hosts in settings.py, just run server with the following command:
 python manage.py runserver 0.0.0.0:8000
 
-6. to deploy it on nginx server i recoomend you to follow https://nisanthsojan.com/django-mysql-gunicorn-nginx-with-docker%E2%80%8A-a-step-by-step-guide/
+6. to deploy it on nginx server i recommend you to [visit](https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-16-04)
 
